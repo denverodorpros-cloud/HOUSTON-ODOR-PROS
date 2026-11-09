@@ -1,0 +1,86 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "statusCode": 308
+    },
+    {
+      "source": "/about.html",
+      "destination": "/about",
+      "statusCode": 308
+    },
+    {
+      "source": "/faq.html",
+      "destination": "/faq",
+      "statusCode": 308
+    },
+    {
+      "source": "/services.html",
+      "destination": "/services",
+      "statusCode": 308
+    },
+    {
+      "source": "/odor-removal-houston.html",
+      "destination": "/odor-removal-houston",
+      "statusCode": 308
+    },
+    {
+      "source": "/pet-odor-removal-houston.html",
+      "destination": "/pet-odor-removal-houston",
+      "statusCode": 308
+    },
+    {
+      "source": "/smoke-odor-removal-houston.html",
+      "destination": "/smoke-odor-removal-houston",
+      "statusCode": 308
+    },
+    {
+      "source": "/mold-odor-removal-houston.html",
+      "destination": "/services",
+      "statusCode": 308
+    },
+    {
+      "source": "/mold-odor-removal-houston",
+      "destination": "/services",
+      "statusCode": 308
+    },
+    {
+      "source": "/vehicle-odor-removal-houston.html",
+      "destination": "/vehicle-odor-removal-houston",
+      "statusCode": 308
+    },
+    {
+      "source": "/real-estate-odor-removal-houston.html",
+      "destination": "/real-estate-odor-removal-houston",
+      "statusCode": 308
+    },
+    {
+      "source": "/thank-you.html",
+      "destination": "/thank-you",
+      "statusCode": 308
+    },
+    {
+      "source": "/marijuana-odor-removal-houston",
+      "destination": "/smoke-odor-removal-houston",
+      "statusCode": 308
+    },
+    {
+      "source": "/marijuana-odor-removal-houston.html",
+      "destination": "/smoke-odor-removal-houston",
+      "statusCode": 308
+    },
+    {
+      "source": "/cooking-odor-removal-houston.html",
+      "destination": "/cooking-odor-removal-houston",
+      "statusCode": 308
+    },
+    {
+      "source": "/boat-rv-odor-removal-houston.html",
+      "destination": "/boat-rv-odor-removal-houston",
+      "statusCode": 308
+    }
+  ]
+}

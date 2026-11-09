@@ -1,0 +1,513 @@
+const PHONE = "(713) 444-4742";
+const EMAIL = "houstonodorpros@gmail.com";
+const THANK_YOU_URL = "/thank-you";
+let chatSoundPlayed = false;
+let audioUnlocked = false;
+
+const revealTargets = [
+  ".section-head",
+  ".service-card",
+  ".step",
+  ".split > *",
+  ".review",
+  ".content-card",
+  ".side-box",
+  ".form-wrap",
+  "details"
+];
+
+function setupReveals() {
+  const nodes = document.querySelectorAll(revealTargets.join(","));
+  nodes.forEach((node, index) => {
+    node.classList.add("reveal", `reveal-delay-${index % 4}`);
+  });
+
+  if (!("IntersectionObserver" in window)) {
+    nodes.forEach((node) => node.classList.add("in-view"));
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("in-view");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.14, rootMargin: "0px 0px -40px 0px" });
+
+  nodes.forEach((node) => observer.observe(node));
+}
+
+setupReveals();
+
+function playChatChime() {
+  if (chatSoundPlayed) return;
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+
+  try {
+    const context = new AudioContext();
+    const now = context.currentTime;
+    const gain = context.createGain();
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.12, now + 0.025);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.48);
+    gain.connect(context.destination);
+
+    [660, 880].forEach((frequency, index) => {
+      const oscillator = context.createOscillator();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(frequency, now + index * 0.12);
+      oscillator.connect(gain);
+      oscillator.start(now + index * 0.12);
+      oscillator.stop(now + index * 0.12 + 0.22);
+    });
+
+    setTimeout(() => context.close(), 650);
+    chatSoundPlayed = true;
+  } catch (error) {
+    // Browsers can block audio until the visitor interacts with the page.
+  }
+}
+
+function unlockChatAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  if (chatBox && chatBox.classList.contains("open")) {
+    playChatChime();
+  }
+}
+
+["pointerdown", "keydown", "scroll"].forEach((eventName) => {
+  window.addEventListener(eventName, unlockChatAudio, { once: true, passive: true });
+});
+
+function encodeForm(form) {
+  const data = new FormData(form);
+  const lines = [];
+  for (const [key, value] of data.entries()) {
+    if (value) lines.push(`${key}: ${value}`);
+  }
+  return encodeURIComponent(lines.join("\n"));
+}
+
+function formDataToObject(form) {
+  const data = new FormData(form);
+  const fields = {};
+  for (const [key, value] of data.entries()) {
+    if (String(value).trim()) fields[key] = String(value).trim();
+  }
+  return fields;
+}
+
+function setFormStatus(form, message, type = "info") {
+  let status = form.querySelector(".form-status");
+  if (!status) {
+    status = document.createElement("p");
+    status.className = "form-status";
+    status.setAttribute("role", "status");
+    form.appendChild(status);
+  }
+  status.textContent = message;
+  status.dataset.type = type;
+}
+
+async function submitLead({ form, source, chatHistory = [] }) {
+  const response = await fetch("/api/estimate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      source,
+      fields: formDataToObject(form),
+      chatHistory,
+      pageUrl: window.location.href
+    })
+  });
+
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(result.error || "Could not send request.");
+  }
+  return result;
+}
+
+document.querySelectorAll(".estimate-form").forEach((form) => {
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = form.querySelector('button[type="submit"]');
+    if (button) button.disabled = true;
+    setFormStatus(form, "Sending your request...", "info");
+
+    try {
+      await submitLead({ form, source: "Website estimate form" });
+      form.reset();
+      setFormStatus(form, "Thank you. Your estimate request was sent to HOUSTON ODOR PROS.", "success");
+      window.location.href = THANK_YOU_URL;
+    } catch (error) {
+      setFormStatus(form, `We could not send the form automatically. Please call ${PHONE} or email ${EMAIL}.`, "error");
+    } finally {
+      if (button) button.disabled = false;
+    }
+  });
+});
+
+const chatButton = document.querySelector(".chat-button");
+const chatBox = document.querySelector(".chat-box");
+const chatBody = document.querySelector(".chat-body");
+const chatForm = document.querySelector(".chat-input");
+const chatInput = document.querySelector(".chat-input input");
+const chatEstimateToggle = document.querySelector(".chat-estimate-toggle");
+const chatEstimateForm = document.querySelector(".chat-estimate-form");
+const chatClose = document.querySelector(".chat-close");
+const chatHistory = [];
+const menuToggle = document.querySelector(".menu-toggle");
+const navLinks = document.querySelector(".nav-links");
+
+if (menuToggle && navLinks) {
+  menuToggle.addEventListener("click", () => {
+    const isOpen = navLinks.classList.toggle("open");
+    menuToggle.setAttribute("aria-expanded", String(isOpen));
+    menuToggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+  });
+
+  navLinks.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      navLinks.classList.remove("open");
+      menuToggle.setAttribute("aria-expanded", "false");
+      menuToggle.setAttribute("aria-label", "Open menu");
+    });
+  });
+}
+
+const ESTIMATE_MESSAGE = "Please fill out the Free Estimate form below. HOUSTON ODOR PROS will review your details and contact you with a quote.";
+
+const faqAnswers = [
+  {
+    "question": "What is ozone odor removal?",
+    "answer": "Ozone odor removal uses O3 gas to react with odor molecules in air, fabrics, vents, and porous surfaces. It is designed to neutralize odors rather than mask them."
+  },
+  {
+    "question": "Is ozone treatment safe for my family?",
+    "answer": "The treated area must be unoccupied by people, pets, and plants during ozone treatment. After the process, the space is ventilated before normal use resumes."
+  },
+  {
+    "question": "Does ozone treatment remove pet urine odor in Houston homes?",
+    "answer": "It can help with pet odor in air, carpets, furniture, and room surfaces. Severe urine contamination may also require cleaning, pad replacement, sealing, or material removal."
+  },
+  {
+    "question": "Can you remove smoke odor from an apartment?",
+    "answer": "Yes. Smoke odor removal usually targets walls, ceilings, vents, fabrics, cabinets, and flooring after the smoke source and residue are addressed."
+  },
+  {
+    "question": "Can you remove odors before move-in?",
+    "answer": "Yes. We help prepare homes and rentals for move-in by assessing lingering pet, smoke, and other household odors. Use the Free Estimate form to share your property details and timeline."
+  },
+  {
+    "question": "Can ozone help with cooking and food odors?",
+    "answer": "Yes. Ozone treatment can help reduce lingering cooking, food, and stale indoor odors after trash, spills, residue, and odor sources are cleaned or removed."
+  },
+  {
+    "question": "How long does ozone odor removal take?",
+    "answer": "Many treatments take several hours, while larger or more severe jobs can require longer treatment and ventilation time."
+  },
+  {
+    "question": "Do I need to leave my home during treatment?",
+    "answer": "Yes. The treated area must remain empty during ozone treatment and until it has been properly ventilated."
+  },
+  {
+    "question": "Can you treat cars and trucks?",
+    "answer": "Yes. Vehicle odor removal can address smoke, pet, spill, food, stale, and resale odors in upholstery, carpets, vents, and trunks."
+  },
+  {
+    "question": "How much does odor removal cost in Houston?",
+    "answer": "Cost depends on odor type, severity, square footage, access, and whether the job is a home, car, rental, or commercial space. HOUSTON ODOR PROS provides free estimates."
+  },
+  {
+    "question": "Do you offer same-day odor removal?",
+    "answer": "Scheduling options are confirmed by address and availability depending on schedule and location. Call (713) 444-4742 to check availability."
+  },
+  {
+    "question": "Do you serve cities outside Houston?",
+    "answer": "Yes. HOUSTON ODOR PROS serves Houston and major cities within approximately 150–200 miles, including Greater Houston, Galveston, Beaumont, Brenham, Bryan–College Station, Huntsville, and Lufkin. Extended trips toward Austin and San Antonio are reviewed by address and availability."
+  },
+  {
+    "question": "Will ozone remove all odors permanently?",
+    "answer": "Ozone can deliver strong results when the odor source is removed or controlled. If the source remains, such as active moisture or repeated pet accidents, odor may return."
+  },
+  {
+    "question": "Is ozone odor removal good for real estate listings?",
+    "answer": "Yes. Fresh-smelling homes can help buyers and renters focus on the property rather than odors from previous occupants, pets, smoke, or moisture."
+  },
+  {
+    "question": "Can ozone treat HVAC odor?",
+    "answer": "Ozone can move through air pathways, but HVAC odor may require filter changes, duct cleaning, or source correction depending on the cause."
+  },
+  {
+    "question": "Do you use fragrance?",
+    "answer": "The goal is odor neutralization first. A light finishing scent may be used only when appropriate and requested."
+  },
+  {
+    "question": "Should I clean before ozone treatment?",
+    "answer": "Basic source cleaning helps. Remove trash, soiled items, ash, pet waste, wet materials, and heavily contaminated belongings when possible."
+  },
+  {
+    "question": "Can you treat furnished homes?",
+    "answer": "Yes, ozone can reach many fabrics and furnishings. Some delicate items, plants, and sensitive materials may need to be removed or protected."
+  },
+  {
+    "question": "Do you work with property managers and landlords?",
+    "answer": "Yes. Rental turnover, apartment odor removal, move-out odor problems, and tenant-ready treatments are common service requests."
+  },
+  {
+    "question": "How do I request a free estimate?",
+    "answer": "Call (713) 444-4742 or use the estimate form on the website. Include the city, odor source, space size, and timeline for the most useful reply."
+  }
+];
+
+const answers = [
+  { keys: ["what is ozone", "ozone odor", "o3", "how does ozone"], text: "Ozone odor removal uses O3 gas to react with odor molecules in an unoccupied space. The goal is to neutralize odor instead of covering it with fragrance." },
+  { keys: ["break down odor", "neutralize", "molecules", "oxidize", "oxidation"], text: "Ozone works by oxidation. O3 reacts with many odor-causing molecules in the air and on exposed surfaces, which can help neutralize the smell instead of simply masking it." },
+  { keys: ["does ozone work", "effective", "really work", "remove smell", "eliminate odor"], text: "Ozone can be very effective for many smoke, pet, vehicle, rental, and real estate odors when the source is removed or controlled first. If the odor source remains, treatment may need cleaning, sealing, repairs, or repeat service." },
+  { keys: ["safe", "safety", "people", "pets", "plant", "family", "baby"], text: "During ozone treatment, people, pets, and plants must be out of the treated area. After treatment, the space is ventilated before normal use resumes." },
+  { keys: ["after treatment", "re enter", "reenter", "go back inside", "ventilate", "air out"], text: "After ozone treatment, the space needs to be ventilated before people, pets, or plants return. Re-entry timing depends on treatment size, ventilation, and odor severity." },
+  { keys: ["food", "medicine", "electronics", "plants", "fish tank", "aquarium"], text: "Before ozone treatment, remove people, pets, plants, aquariums, and sensitive items when advised. Food, medication, and delicate materials should be protected or removed from the treated area." },
+  { keys: ["pet", "urine", "dog", "cat", "dander"], text: "Pet odor treatment targets urine, dander, and odors trapped in carpets, upholstery, baseboards, and air pathways. Heavy urine contamination may also need cleaning, sealing, or material replacement." },
+  { keys: ["smoke", "cigarette", "tobacco", "cigar", "fire", "cooking smoke"], text: "Smoke odors can settle into walls, ceilings, vents, fabrics, cabinets, and flooring. Ozone treatment can help reduce smoke odor after source cleaning is complete." },
+  { keys: ["marijuana", "cannabis", "weed"], text: "We offer general smoke odor removal for homes, rentals, and vehicles. Please use the Free Estimate form to tell us about the odor and property." },
+  { keys: ["mold", "musty", "mildew", "damp"], text: "HOUSTON ODOR PROS does not currently provide mold or musty odor removal service. For active mold, water intrusion, or damp building issues, contact a qualified remediation professional first." },
+  { keys: ["vehicle", "car", "truck", "auto", "rideshare", "fleet", "boat", "rv", "recreational vehicle"], text: "Vehicle odor treatment is available for sedans, SUVs, trucks, vans, boats, RVs, rideshare vehicles, and fleet units. We treat cars at the client's property for convenience, usually in the garage or driveway. We just need safe access to the vehicle and a power outlet for our extension cord." },
+  { keys: ["real estate", "rental", "listing", "tenant", "landlord", "property manager", "open house"], text: "Odor removal is a good fit before listing photos, showings, tenant turnover, guest arrivals, and move-in dates. Priority scheduling may be available for time-sensitive properties." },
+  { keys: ["how long", "duration", "take", "hours"], text: "Many ozone odor treatments take several hours, while larger or more severe odor problems can require longer treatment and ventilation time." },
+  { keys: ["one treatment", "second treatment", "repeat", "multiple treatments"], text: "Many odor issues improve with one treatment, but severe smoke or urine odors may need added cleaning, sealing, or another treatment depending on source and severity." },
+  { keys: ["leave", "stay home", "during treatment", "occupied"], text: "The treated area must remain unoccupied during ozone treatment and until it has been properly ventilated." },
+  { keys: ["same day", "schedule", "appointment", "available", "availability", "book"], text: `Scheduling options are confirmed by address and availability in Houston and nearby cities. Call ${PHONE} for the fastest scheduling.` },
+  { keys: ["service area", "cities", "outside houston", "near me", "150 miles"], text: "HOUSTON ODOR PROS serves Houston and major cities within approximately 150–200 miles, including Greater Houston, Galveston, Beaumont, Brenham, Bryan–College Station, Huntsville, and Lufkin. Extended trips toward Austin and San Antonio are reviewed by address and availability." },
+  { keys: ["permanent", "return", "come back", "guarantee"], text: "Ozone can deliver strong results when the odor source is removed or controlled. If the source remains, such as active moisture or repeated pet accidents, odor may return. HOUSTON ODOR PROS offers a result guarantee without overstating what ozone can do." },
+  { keys: ["hvac", "duct", "vent", "filter"], text: "Ozone can move through air pathways, but HVAC odors may also require filter changes, duct cleaning, or source correction depending on the cause." },
+  { keys: ["fragrance", "perfume", "scent", "spray"], text: "The goal is odor neutralization first, not masking smells with fragrance. A light finishing scent may be used only when appropriate and requested." },
+  { keys: ["clean before", "prepare", "before ozone", "before treatment"], text: "Basic source cleaning helps. Remove trash, soiled items, ash, pet waste, wet materials, and heavily contaminated belongings when possible." },
+  { keys: ["carpet", "upholstery", "curtains", "fabric", "couch", "sofa", "mattress"], text: "Ozone can help with odors in exposed fabrics such as upholstery, curtains, carpet, and furniture, but heavily contaminated materials may also need cleaning, replacement, or sealing." },
+  { keys: ["walls", "drywall", "paint", "ceiling", "cabinets"], text: "Odors can absorb into walls, ceilings, cabinets, and painted surfaces. Ozone may help, but severe smoke or contamination can sometimes require washing, sealing, or repainting." },
+  { keys: ["furnished", "furniture", "couch", "sofa"], text: "Furnished homes can often be treated. Some delicate items, plants, and sensitive materials may need to be removed or protected before ozone treatment." },
+  { keys: ["property managers", "landlords", "tenant turnover"], text: "Yes, HOUSTON ODOR PROS works with property managers and landlords for rental turnover, apartment odor removal, move-out odor problems, and tenant-ready treatments." },
+  { keys: ["price", "cost", "pricing", "estimate", "quote"], text: ESTIMATE_MESSAGE },
+  { keys: ["travel fee", "travel charge", "mileage", "distance", "20 miles"], text: "Regional visits and any travel fee are confirmed with your estimate. We can confirm that when we review the address and appointment details." },
+  { keys: ["small room", "bedroom", "bathroom", "studio"], text: "Small rooms can often be treated, but the best estimate depends on square footage, odor type, and severity. Include the room size and odor details in the Free Estimate form." },
+  { keys: ["apartment", "condo", "house", "home"], text: "HOUSTON ODOR PROS treats apartments, condos, and homes for pet, smoke, and rental turnover odors. Use the Free Estimate form to request a quote." },
+  { keys: ["airbnb", "short term rental", "guest", "host"], text: "Yes, ozone odor removal can help short-term rentals between guests, especially for smoke, cannabis, pet, and food smells. Timing matters because the space must be unoccupied and ventilated." },
+  { keys: ["hotel", "office", "business", "commercial"], text: "Commercial odor removal may be available depending on the space, odor source, and access. Email HOUSTON ODOR PROS to review the site details and timing." },
+  { keys: ["dead animal", "skunk", "trash", "garbage", "sewage"], text: "Strong source odors such as dead animal, trash, skunk, or sewage smells usually require source removal and cleaning first. Ozone can help with lingering odor after the source is handled." },
+  { keys: ["allergy", "asthma", "health", "medical"], text: "Ozone odor treatment is not medical care and should not be used while people are inside. If someone has asthma, allergies, or respiratory concerns, follow medical advice and make sure the space is fully ventilated before re-entry." },
+  { keys: ["contact", "phone", "telephone", "number", "email", "call"], text: `You can call HOUSTON ODOR PROS at ${PHONE} or email ${EMAIL}.` }
+];
+
+function extractSquareFeet(text) {
+  const lower = text.toLowerCase();
+  const direct = lower.match(/(\d[\d,]*)\s*(sq\.?\s*ft|sqft|sf|square\s*(feet|foot)|squer\s*ft|sqf)\b/);
+  if (direct) return Number(direct[1].replace(/,/g, ""));
+
+  return null;
+}
+
+function normalizeText(text) {
+  return text.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function includesTerm(text, term) {
+  return new RegExp(`\\b${normalizeText(term)}(?:s)?\\b`).test(text);
+}
+
+function findBestAnswer(text) {
+  const lower = normalizeText(text);
+  let best = null;
+  let bestScore = 0;
+
+  answers.forEach((item) => {
+    let score = 0;
+    item.keys.forEach((key) => {
+      const normalizedKey = normalizeText(key);
+      if (includesTerm(lower, normalizedKey)) {
+        score += normalizedKey.split(" ").length + 1;
+      } else {
+        normalizedKey.split(" ").forEach((word) => {
+          if (word.length > 3 && includesTerm(lower, word)) score += 0.35;
+        });
+      }
+    });
+    if (score > bestScore) {
+      bestScore = score;
+      best = item;
+    }
+  });
+
+  return bestScore >= 1 ? best : null;
+}
+
+function answerServiceQuestion(text) {
+  const lower = normalizeText(text);
+  const serviceQuestions = [
+    { terms: ["cooking", "food", "kitchen", "grease", "spice", "burnt food"], service: "cooking odor", detail: "Yes. HOUSTON ODOR PROS offers cooking odor removal for lingering food, grease, spice, and burnt-food smells in homes and rentals after the source and residue are addressed." },
+    { terms: ["pet", "dog", "cat", "urine"], service: "pet odor", detail: "Yes. HOUSTON ODOR PROS removes pet odor from homes, apartments, rentals, carpets, upholstery, and affected rooms." },
+    { terms: ["smoke", "cigarette", "tobacco", "cigar"], service: "smoke odor", detail: "Yes. HOUSTON ODOR PROS removes smoke odor from homes, apartments, vehicles, rentals, and listings." },
+    { terms: ["marijuana", "cannabis", "weed"], service: "smoke odor", detail: "We offer general smoke odor removal for homes, rentals, and vehicles." },
+    { terms: ["mold", "musty", "mildew", "damp"], service: "mold and musty odor", detail: "HOUSTON ODOR PROS does not currently provide mold or musty odor removal service. For active mold, dampness, or water intrusion, contact a qualified remediation professional first." },
+    { terms: ["car", "vehicle", "truck", "auto", "van", "boat", "rv", "recreational vehicle"], service: "vehicle odor", detail: "Yes. HOUSTON ODOR PROS removes odors from sedans, SUVs, trucks, vans, boats, RVs, and other vehicles, including smoke, pet, food, spill, stale, and resale odors. Cars can be treated at your property in a garage or driveway with access to a power outlet." },
+    { terms: ["rental", "real estate", "listing", "tenant", "airbnb"], service: "rental and real estate odor", detail: "Yes. HOUSTON ODOR PROS handles rental, real estate, Airbnb, tenant turnover, and listing odor removal." }
+  ];
+
+  const asksDoYou = /\b(do|can|could|will)\s+(you|u|houston odor pros)\b/.test(lower) || lower.includes("do you remove") || lower.includes("can you remove");
+  if (!asksDoYou) return null;
+
+  const found = serviceQuestions.find((item) => item.terms.some((term) => includesTerm(lower, term)));
+  if (!found) return null;
+  if (found.service === "mold and musty odor") return found.detail;
+  if (found.service === "vehicle odor") return `${found.detail} Call ${PHONE} for vehicle scheduling and pricing. Regional visits and any travel fee are confirmed with your estimate.`;
+  return `${found.detail} Use the Free Estimate form to request a quote or call ${PHONE}. Regional visits and any travel fee are confirmed with your estimate.`;
+}
+
+function addMessage(text, type = "bot") {
+  if (!chatBody) return;
+  const msg = document.createElement("div");
+  msg.className = `message ${type}`;
+  msg.textContent = text;
+  chatBody.appendChild(msg);
+  chatHistory.push(`${type === "bot" ? "HOUSTON ODOR PROS" : "Visitor"}: ${text}`);
+  if (chatHistory.length > 12) chatHistory.shift();
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function openChatEstimateForm() {
+  if (!chatEstimateForm) return;
+  chatEstimateForm.classList.add("open");
+  const squareFootageInput = chatEstimateForm.querySelector('[name="Square footage"]');
+  const lastVisitorMessage = [...chatHistory].reverse().find((line) => line.startsWith("Visitor:"));
+  if (squareFootageInput && lastVisitorMessage && !squareFootageInput.value) {
+    const squareFeet = extractSquareFeet(lastVisitorMessage);
+    if (squareFeet) squareFootageInput.value = squareFeet;
+  }
+}
+
+function wantsEstimate(text) {
+  return /\b(quotes?|estimates?|prices?|pricing|costs?|charge|charges|charging|rate|rates|budget|how much|how expensive|afford)\b/i.test(text) ||
+    Boolean(extractSquareFeet(text)) || /^\s*\d[\d,]*\s*$/.test(text);
+}
+
+function replyToChat(text) {
+  const lower = text.toLowerCase();
+  if (wantsEstimate(text)) return ESTIMATE_MESSAGE;
+  const faq = faqAnswers.find((item) => normalizeText(item.question) === normalizeText(text));
+  if (faq) return faq.answer;
+  if (/\b(safe|safely|safety|stay|remain|occupied)\b/.test(lower)) {
+    return "During ozone treatment, people, pets, and plants must be out of the treated area. After treatment, the space is ventilated before normal use resumes. Email HOUSTON ODOR PROS to confirm preparation and re-entry instructions.";
+  }
+  if (/\b(tomorrow|today|schedule|scheduling|appointment|availability|book|booking)\b/.test(lower)) {
+    return `Scheduling options are confirmed by address and availability depending on schedule and location. Call ${PHONE} to confirm availability. This chat cannot book an appointment.`;
+  }
+  if (/\b(boats?|yachts?|rvs?|motorhomes?|motor homes?|campers?|campervans?|travel trailers?|fifth wheels?|recreational vehicles?)\b/.test(lower)) {
+    return "Yes. We offer a combined Boat, RV & Motorhome Odor Removal service for lingering interior smoke, pet, cooking, and storage odors. Marina or storage visits depend on access, permission, suitable power, and availability. Leaks, holding-tank, plumbing, fuel, and active moisture problems need source correction first. Use the Free Estimate form to share your unit type, size, location, and odor details.";
+  }
+  if (/\b(cooking|food|kitchen|grease|spice|spices)\b/.test(lower) && /\b(odor|odors|smell|smells)\b/.test(lower)) {
+    return "Yes. Ozone treatment can help reduce lingering cooking and food odors after trash, spills, residue, and odor sources are cleaned or removed.";
+  }
+  const serviceAnswer = answerServiceQuestion(text);
+  if (serviceAnswer) return serviceAnswer;
+  const found = findBestAnswer(text);
+  return found ? found.text : `I can answer FAQ questions about ozone treatment, safety, pet odor, smoke odor, cooking odors, cars, boats, RVs, motorhomes, rentals, scheduling, and pricing. Use the Free Estimate form to request a quote.`;
+}
+
+if (chatButton && chatBox) {
+  chatButton.innerHTML = 'O3<span class="chat-badge" aria-hidden="true"></span>';
+  chatButton.addEventListener("click", () => {
+    chatBox.classList.toggle("open");
+    playChatChime();
+  });
+  if (document.body.dataset.page === "home") {
+    setTimeout(() => {
+      chatBox.classList.add("open");
+      playChatChime();
+    }, 900);
+  }
+}
+
+if (chatClose && chatBox) {
+  chatClose.addEventListener("click", () => {
+    chatBox.classList.remove("open");
+  });
+}
+
+if (chatEstimateToggle && chatEstimateForm) {
+  chatEstimateToggle.addEventListener("click", () => {
+    chatEstimateForm.classList.toggle("open");
+  });
+
+  chatEstimateForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = chatEstimateForm.querySelector('button[type="submit"]');
+    if (button) button.disabled = true;
+    setFormStatus(chatEstimateForm, "Sending your request...", "info");
+
+    try {
+      await submitLead({
+        form: chatEstimateForm,
+        source: "Website chat estimate form",
+        chatHistory: chatHistory.slice(-10)
+      });
+      chatEstimateForm.reset();
+      setFormStatus(chatEstimateForm, "Sent. HOUSTON ODOR PROS received your estimate request.", "success");
+      addMessage("Thanks. Your estimate request was sent to HOUSTON ODOR PROS. You can also call (713) 444-4742 for faster scheduling.", "bot");
+      window.location.href = THANK_YOU_URL;
+    } catch (error) {
+      setFormStatus(chatEstimateForm, `We could not send automatically. Please call ${PHONE} or email ${EMAIL}.`, "error");
+      addMessage("I could not send the request automatically. Please call (713) 444-4742 or email houstonodorpros@gmail.com.", "bot");
+    } finally {
+      if (button) button.disabled = false;
+    }
+  });
+}
+
+if (chatForm) {
+  chatForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const text = chatInput.value.trim();
+    if (!text) return;
+    addMessage(text, "user");
+    chatInput.value = "";
+    const reply = replyToChat(text);
+    addMessage(reply, "bot");
+    if (wantsEstimate(text)) {
+      openChatEstimateForm();
+    }
+    const lower = text.toLowerCase();
+    const wantsContact = ["contact me", "email me", "send message", "request callback", "call me"].some((phrase) => lower.includes(phrase));
+    if (wantsContact) {
+      openChatEstimateForm();
+      addMessage("Please add your name, phone, and email in the estimate form so HOUSTON ODOR PROS can contact you.", "bot");
+    }
+  });
+}
+
+// Add Houston-specific tracking IDs when the Houston accounts are ready.
+const houstonIntegrations = window.HOUSTON_CONFIG || {};
+if (houstonIntegrations.tawkEmbedUrl && /^https:\/\/embed\.tawk\.to\/[a-zA-Z0-9]+\/[a-zA-Z0-9]+$/.test(houstonIntegrations.tawkEmbedUrl)) {
+  window.Tawk_API = window.Tawk_API || {};
+  window.Tawk_LoadStart = new Date();
+  window.Tawk_API.onLoad = function () {
+    if (typeof window.Tawk_API.hideWidget === "function") window.Tawk_API.hideWidget();
+  };
+  const tawk = document.createElement("script");
+  tawk.async = true;
+  tawk.src = houstonIntegrations.tawkEmbedUrl;
+  tawk.setAttribute("crossorigin", "*");
+  document.head.appendChild(tawk);
+}
+if (/^(AW-\d+|G-[A-Z0-9]+)$/.test(houstonIntegrations.googleTagId || "")) {
+  const tag = document.createElement("script");
+  tag.async = true;
+  tag.src = "https://www.googletagmanager.com/gtag/js?id=" + houstonIntegrations.googleTagId;
+  document.head.appendChild(tag);
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag("js", new Date());
+  window.gtag("config", houstonIntegrations.googleTagId);
+}
