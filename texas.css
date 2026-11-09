@@ -63,7 +63,8 @@ h2 { letter-spacing:-.025em; line-height:1.12; }
 .form-wrap { background:#fff; border-top:4px solid #ad3e32; }
 .site-footer { background:#10253e; color:#fffaf0; }
 .site-footer .brand { color:white; }
-.footer-call-button { background:#ad3e32; }
+.site-footer .footer-call-button { background:#ad3e32; color:#fff; box-shadow:0 6px 16px #601f1730; }
+.site-footer .footer-call-button:hover { background:#8e3027; }
 .chat-head { background:#122d4c; }
 .chat-estimate-form { background:#f8f3e9; }
 .chat-estimate-toggle,.chat-button { background:#ad3e32; }
