@@ -159,3 +159,10 @@ input, select, textarea { color: var(--body); border-color: var(--line); }
 input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,175,224,.2); }
 :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
 .site-footer :focus-visible, .hero :focus-visible { outline-color: var(--cyan); }
+
+/* Vivid cyan and lime accents matched to the supplied logo reference. */
+.hero { border-bottom-color: #00AFE0; }
+.hero-panel { border-top-color: #82D500; }
+.step strong, .confirm-mark { border-color: #82D500; }
+.hero .eyebrow, .process-band .eyebrow { color: #00AFE0; }
+.expectation-star { color: #086B9F; }
