@@ -84,6 +84,7 @@ img { max-width: 100%; display: block; }
 }
 .nav-links { display: flex; align-items: center; gap: 18px; font-size: .94rem; color: #244a61; }
 .nav-links a:hover { color: var(--blue); }
+.nav-links .mobile-home { display: none; }
 .menu-toggle {
   display: none;
   width: 48px;
@@ -665,6 +666,7 @@ details p { color: var(--muted); margin-bottom: 0; }
     padding: 12px 0 4px;
   }
   .nav-links.open { display: flex; }
+  .nav-links .mobile-home { display: block; }
   .nav-links a:not(.btn) {
     display: block;
     padding: 12px 14px;

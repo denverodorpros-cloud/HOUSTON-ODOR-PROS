@@ -1,85 +1,85 @@
-/* Houston edition: Gulf Coast light, Lone Star colors, familiar service layout. */
-:root { --ink:#122d4c; --muted:#52616d; --blue:#244f7c; --green:#ad3e32; --sky:#dfd3bb; --mint:#f8f1e6; --wash:#f7f2e9; --line:rgba(18,45,76,.15); --shadow:0 18px 50px rgba(18,45,76,.12); --radius:8px; }
-body { background:#fffcf6; }
+/* Houston edition: fresh navy, cyan and natural green. */
+:root { --ink:#092769; --muted:#516580; --blue:#086B9F; --green:#507E37; --sky:#CFE4F0; --mint:#EAF6FB; --wash:#F8FBFE; --line:rgba(18,45,76,.15); --shadow:0 18px 50px rgba(18,45,76,.12); --radius:8px; }
+body { background:#F8FBFE; }
 body, button, input, select, textarea { font-family:'Manrope','Segoe UI',sans-serif; }
 .container { width:min(1200px,calc(100% - 48px)); }
-.site-header { background:#fffcf6; border-top:5px solid #122d4c; border-bottom:1px solid #ddd7cb; }
+.site-header { background:#F8FBFE; border-top:5px solid #092769; border-bottom:1px solid #CFE4F0; }
 .nav { min-height:86px; gap:18px; }
-.brand { color:#122d4c; font-size:1.03rem; letter-spacing:.02em; gap:11px; }
+.brand { color:#092769; font-size:1.03rem; letter-spacing:.02em; gap:11px; }
 .brand-wordmark { line-height:1.2; font-weight:900; letter-spacing:.065em; }
 .brand-wordmark>span { display:block; font-size:.73em; letter-spacing:.23em; margin-top:4px; }
-.logo-mark { background:#122d4c; width:55px; height:55px; border-radius:10px; box-shadow:none; }
+.logo-mark { background:#092769; width:55px; height:55px; border-radius:10px; box-shadow:none; }
 .logo-mark img { width:100%;height:100%;object-fit:contain; }
 .logo-mark::before,.logo-mark::after { display:none; }
 .nav-links { gap:25px; font-size:.9rem; }
 .btn { border-radius:5px; font-size:.94rem; min-height:50px; padding:13px 23px; }
-.btn-primary { background:#ad3e32; box-shadow:0 6px 16px #601f1718; }
-.btn-primary:hover { background:#8e3027; }
-.btn-outline { color:#122d4c; border-color:#122d4c; }
-.eyebrow { color:#994133; font-size:.78rem; letter-spacing:.15em; }
-.hero { color:#fffcf6; background:linear-gradient(90deg,rgba(10,29,49,.96),rgba(10,29,49,.82) 45%,rgba(10,29,49,.25)),url('/assets/houston-skyline.jpg') center 56%/cover; border-bottom:7px solid #ad3e32; }
+.btn-primary { background:#507E37; box-shadow:0 6px 16px #09276918; }
+.btn-primary:hover { background:#086B9F; }
+.btn-outline { color:#092769; border-color:#092769; }
+.eyebrow { color:#086B9F; font-size:.78rem; letter-spacing:.15em; }
+.hero { color:#F8FBFE; background:linear-gradient(90deg,rgba(10,29,49,.96),rgba(10,29,49,.82) 45%,rgba(10,29,49,.25)),url('/assets/houston-skyline.jpg') center 56%/cover; border-bottom:7px solid #507E37; }
 .hero::before,.hero::after,.page-hero::before,.page-hero::after,.landing-hero::before,.landing-hero::after { display:none; }
 .hero-inner { min-height:675px; grid-template-columns:1.2fr .8fr; gap:60px; padding:83px 0 76px; }
 .hero h1 { font-family:Georgia,'Times New Roman',serif; font-size:clamp(3.7rem,6.2vw,6.2rem); font-weight:500; letter-spacing:-.045em; line-height:.99; margin:24px 0; }
-.hero .eyebrow { color:#e3cfa8; }
+.hero .eyebrow { color:#00AFE0; }
 .hero .lead { color:#e5e9eb; max-width:550px; font-size:1.15rem; line-height:1.75; }
-.hero .btn-ghost { color:#fffaf0; background:transparent; border-color:#ffffff60; }
+.hero .btn-ghost { color:#FFFFFF; background:transparent; border-color:#ffffff60; }
 .hero .btn-ghost span { padding-left:18px; }
-.hero-panel { margin-top:100px; background:rgba(255,252,246,.96); color:#122d4c; padding:29px; border-top:4px solid #bb9c69; border-radius:5px; box-shadow:0 15px 45px #0002; animation:float-in .8s both; }
+.hero-panel { margin-top:100px; background:rgba(255,252,246,.96); color:#092769; padding:29px; border-top:4px solid #00AFE0; border-radius:5px; box-shadow:0 15px 45px #0002; animation:float-in .8s both; }
 .hero-panel h2 { font-size:2rem; line-height:1.12; letter-spacing:-.025em; margin-top:12px; }
-.hero-panel .eyebrow { color:#994133; font-size:.68rem; }
-.hero-panel p { color:#52616d; font-size:.92rem; }
+.hero-panel .eyebrow { color:#086B9F; font-size:.68rem; }
+.hero-panel p { color:#516580; font-size:.92rem; }
 .metric-grid { margin-top:25px; gap:10px; }
-.metric { background:#f4eee3; border:1px solid #dfd3bb; border-radius:4px; padding:13px; }
-.metric strong { color:#122d4c; font-size:1.7rem; }
-.metric span { font-size:.76rem; color:#52616d; }
+.metric { background:#EAF6FB; border:1px solid #CFE4F0; border-radius:4px; padding:13px; }
+.metric strong { color:#092769; font-size:1.7rem; }
+.metric span { font-size:.76rem; color:#516580; }
 h2 { letter-spacing:-.025em; line-height:1.12; }
-.home-ozone-bg { background:linear-gradient(#fffcf6ee,#fffcf6f5),url('/assets/ozone-molecules-background-optimized.jpg') center/cover fixed; }
-.service-card { background:#fff; border-color:#e4ded4; border-radius:6px; }
+.home-ozone-bg { background:linear-gradient(#F8FBFEee,#F8FBFEf5),url('/assets/ozone-molecules-background-optimized.jpg') center/cover fixed; }
+.service-card { background:#fff; border-color:#CFE4F0; border-radius:6px; }
 .service-card img { height:230px; }
 .service-card h3 { font-size:1.2rem; }
-.service-card a { color:#9c382d; }
+.service-card a { color:#086B9F; }
 .service-card a::after { content:' ↗'; }
-.process-band { background:#122d4c; color:#fffaf0; }
-.process-band .eyebrow { color:#e3cfa8; }
+.process-band { background:#092769; color:#FFFFFF; }
+.process-band .eyebrow { color:#00AFE0; }
 .process-band .lead { color:#e2e7ec; }
 .step { background:#ffffff08; border-color:#ffffff28; }
-.step strong { background:#e3cfa8; color:#122d4c; box-shadow:none; }
+.step strong { background:#00AFE0; color:#092769; box-shadow:none; }
 .step p { color:#dde3e9; }
-.houston-photo { position:relative; border-radius:6px; box-shadow:18px 18px 0 #e6dcc8; overflow:hidden; }
+.houston-photo { position:relative; border-radius:6px; box-shadow:18px 18px 0 #EAF6FB; overflow:hidden; }
 .houston-photo img { height:430px; width:100%;object-fit:cover; }
-.photo-caption { position:absolute; bottom:0; left:0; right:0; padding:60px 25px 25px; color:white; background:linear-gradient(transparent,#122d4ce6); }
+.photo-caption { position:absolute; bottom:0; left:0; right:0; padding:60px 25px 25px; color:white; background:linear-gradient(transparent,#092769e6); }
 .photo-caption span,.photo-caption strong { display:block; }
 .photo-caption span { font-size:.8rem; text-transform:uppercase; letter-spacing:.15em; }
 .photo-caption strong { font-family:Georgia,serif; font-size:1.9rem; }
-.regional-note { font-size:.92rem; color:#52616d; line-height:1.7; }
-.regional-note a { color:#994133; font-weight:800; text-decoration:underline; }
+.regional-note { font-size:.92rem; color:#516580; line-height:1.7; }
+.regional-note a { color:#086B9F; font-weight:800; text-decoration:underline; }
 .area-list { font-size:.9rem; }
-.area-list li::marker { color:#ad3e32; }
-.review { background:#fffdf9; border:1px solid #e4ded4; box-shadow:none; }
+.area-list li::marker { color:#507E37; }
+.review { background:#FFFFFF; border:1px solid #CFE4F0; box-shadow:none; }
 .review h3 { margin-top:10px; }
-.expectation-star { color:#ad3e32; font-size:1.8rem; }
-.form-wrap { background:#fff; border-top:4px solid #ad3e32; }
-.site-footer { background:#10253e; color:#fffaf0; }
+.expectation-star { color:#507E37; font-size:1.8rem; }
+.form-wrap { background:#fff; border-top:4px solid #507E37; }
+.site-footer { background:#092769; color:#FFFFFF; }
 .site-footer .brand { color:white; }
-.site-footer .footer-call-button { background:#ad3e32; color:#fff; box-shadow:0 6px 16px #601f1730; }
-.site-footer .footer-call-button:hover { background:#8e3027; }
-.chat-head { background:#122d4c; }
-.chat-estimate-form { background:#f8f3e9; }
-.chat-estimate-toggle,.chat-button { background:#ad3e32; }
-.chat-button { box-shadow:0 6px 25px #122d4c35; }
-.chat-badge { background:#dfbd76; }
-.message.bot { background:#f5efe4; }
-.message.user { background:#e6edf4; }
-.chat-estimate-form button { background:#122d4c; }
-.page-hero,.landing-hero { background:linear-gradient(105deg,#faf5eaf2,#faf5eade 55%,#faf5ea80),var(--hero-image,url('/assets/houston-skyline.jpg')) center/cover; }
+.site-footer .footer-call-button { background:#507E37; color:#fff; box-shadow:0 6px 16px #09276930; }
+.site-footer .footer-call-button:hover { background:#086B9F; }
+.chat-head { background:#092769; }
+.chat-estimate-form { background:#EAF6FB; }
+.chat-estimate-toggle,.chat-button { background:#507E37; }
+.chat-button { box-shadow:0 6px 25px #09276935; }
+.chat-badge { background:#82D500; }
+.message.bot { background:#EAF6FB; }
+.message.user { background:#EAF6FB; }
+.chat-estimate-form button { background:#092769; }
+.page-hero,.landing-hero { background:linear-gradient(105deg,#F8FBFEf2,#F8FBFEde 55%,#F8FBFE80),var(--hero-image,url('/assets/houston-skyline.jpg')) center/cover; }
 .page-hero::after,.landing-hero::after { opacity:.25; }
-.cta-band { background:#f0e5d2; }
+.cta-band { background:#EAF6FB; }
 .zone-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:35px; }
-.zone { background:#fffdf8; border:1px solid #dfd3bb; border-top:4px solid #ad3e32; padding:26px; border-radius:5px; }
+.zone { background:#FFFFFF; border:1px solid #CFE4F0; border-top:4px solid #507E37; padding:26px; border-radius:5px; }
 .zone h3 { line-height:1.3; }
-.zone ul { padding-left:20px; color:#52616d; line-height:1.9; }
-.zone-kicker { font-size:.76rem; text-transform:uppercase; color:#994133; letter-spacing:.1em; font-weight:800; }
+.zone ul { padding-left:20px; color:#516580; line-height:1.9; }
+.zone-kicker { font-size:.76rem; text-transform:uppercase; color:#086B9F; letter-spacing:.1em; font-weight:800; }
 .houston-brand { flex:0 0 auto; }
 .houston-brand .full-logo { width:300px; height:100px; object-fit:contain; display:block; }
 .footer-brand { width:max-content; max-width:100%; background:transparent; border-radius:0; padding:4px 0; }
@@ -88,7 +88,74 @@ h2 { letter-spacing:-.025em; line-height:1.12; }
 .nav-links { flex-wrap:wrap; }
 @media(max-width:620px) { .houston-brand .full-logo { width:240px; height:80px; } .nav { gap:8px; } .landing-header .houston-brand .full-logo { width:205px; height:70px; } .landing-header .btn { font-size:.8rem; padding:10px; } }
 .area-intro { max-width:780px; }
-.contact-note { font-size:.85rem; color:#52616d; }
+.contact-note { font-size:.85rem; color:#516580; }
 @media(max-width:1000px) { .hero-inner { gap:30px; } .nav-links { gap:14px; } .hero h1 { font-size:4.5rem; } }
 @media(max-width:900px) { .hero-inner { grid-template-columns:1fr; padding:64px 0; } .hero-panel { margin-top:0; max-width:540px; } .nav-links { gap:8px; } .zone-grid { grid-template-columns:1fr; } }
-@media(max-width:620px) { .container { width:calc(100% - 32px); } .hero h1 { font-size:3.65rem; } .hero-inner { padding:50px 0; gap:36px; } .hero .lead { font-size:1.02rem; } .hero .hero-actions .btn { width:100%; } .hero-panel { padding:22px; } .hero-panel .metric-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .hero-panel h2 { font-size:1.8rem; } .metric strong { font-size:1.5rem; } .brand { font-size:.9rem; } .houston-photo { box-shadow:8px 8px 0 #e6dcc8; } .houston-photo img { height:320px; } .nav { min-height:78px; } .service-card img { height:230px; } .brand-wordmark>span { font-size:.75em; } }
+@media(max-width:620px) { .container { width:calc(100% - 32px); } .hero h1 { font-size:3.65rem; } .hero-inner { padding:50px 0; gap:36px; } .hero .lead { font-size:1.02rem; } .hero .hero-actions .btn { width:100%; } .hero-panel { padding:22px; } .hero-panel .metric-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .hero-panel h2 { font-size:1.8rem; } .metric strong { font-size:1.5rem; } .brand { font-size:.9rem; } .houston-photo { box-shadow:8px 8px 0 #EAF6FB; } .houston-photo img { height:320px; } .nav { min-height:78px; } .service-card img { height:230px; } .brand-wordmark>span { font-size:.75em; } }
+
+/* Shared brand palette and accessible foregrounds. */
+:root {
+  --ink: #092769;
+  --body: #415875;
+  --muted: #516580;
+  --blue: #086B9F;
+  --cyan: #00AFE0;
+  --green: #507E37;
+  --lime: #82D500;
+  --wash: #F8FBFE;
+  --mint: #EAF6FB;
+  --line: #CFE4F0;
+  --shadow: 0 18px 50px rgba(9,39,105,.12);
+  --primary-gradient: linear-gradient(135deg, #092769, #086B9F);
+  --badge-gradient: linear-gradient(145deg, #69984B, #507E37 45%, #416B2C);
+}
+body { color: var(--body); background: var(--wash); }
+h1, h2, h3, h4, summary, label, .nav-links { color: var(--ink); }
+main p a, main li a { color: var(--blue); }
+.nav-links a:hover { color: var(--blue); }
+.btn-primary, .site-footer .footer-call-button, .chat-button,
+.chat-estimate-toggle, .chat-estimate-form button, .chat-input button {
+  background: var(--primary-gradient);
+  color: #FFFFFF;
+  border-bottom: 3px solid var(--lime);
+  box-shadow: 0 6px 16px rgba(9,39,105,.16);
+}
+.btn-primary:hover, .site-footer .footer-call-button:hover {
+  background: linear-gradient(135deg, #086B9F, #092769);
+  color: #FFFFFF;
+}
+.nav-links .btn-primary:hover, .thank-you-panel .btn-primary { color: #FFFFFF; }
+.btn-outline { color: var(--blue); border-color: var(--blue); }
+.hero { background: linear-gradient(90deg,rgba(9,39,105,.97),rgba(9,39,105,.84) 45%,rgba(8,107,159,.3)),url('/assets/houston-skyline.jpg') center 56%/cover; border-bottom-color: var(--cyan); }
+.hero h1, .hero .lead, .process-band h2, .process-band h3 { color: #FFFFFF; }
+.hero .eyebrow, .process-band .eyebrow { color: #FFFFFF; }
+.hero-panel { background: #FFFFFF; border-color: var(--line); border-top-color: var(--cyan); }
+.hero-panel h2 { color: var(--ink); }
+.hero-panel p, .hero-panel .metric span { color: var(--muted); }
+.home-ozone-bg::before { background: radial-gradient(circle at 12% 18%,rgba(0,175,224,.12),transparent 28%),radial-gradient(circle at 82% 72%,rgba(80,126,55,.06),transparent 32%); }
+.service-card, .content-card, .review, .zone, .form-wrap, details,
+.thank-you-panel { background: #FFFFFF; border-color: var(--line); }
+.service-card:hover { border-color: var(--cyan); }
+.form-wrap { border-top-color: var(--cyan); }
+.zone { border-top-color: var(--green); }
+.side-box, .metric, .cta-band, .chat-estimate-form { background: var(--mint); }
+.cta-band h2 { color: var(--ink); }
+.cta-band p { color: var(--body); }
+.process-band, .site-footer, .chat-head { background: var(--ink); color: #FFFFFF; }
+.site-footer h3, .site-footer p, .site-footer a, .footer-bottom { color: #FFFFFF; }
+.step strong, .confirm-mark, .trust-points span {
+  background: var(--badge-gradient);
+  color: #FFFFFF;
+  border: 1px solid #416B2C;
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.3),0 4px 10px rgba(65,107,44,.18);
+}
+.step strong, .confirm-mark { border-radius: 50%; }
+.chat-badge { background: var(--lime); }
+.expectation-star, .area-list li::marker { color: var(--green); }
+.message.bot { background: var(--mint); color: var(--body); }
+.message.user { background: #F8FBFE; color: var(--ink); }
+input, select, textarea { color: var(--body); border-color: var(--line); }
+input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,175,224,.2); }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+.site-footer :focus-visible, .hero :focus-visible { outline-color: var(--cyan); }
