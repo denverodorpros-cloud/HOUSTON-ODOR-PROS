@@ -1,5 +1,33 @@
 # Houston edition verification — November 9, 2026
 
+## Local redesign review — November 24, 2026
+
+This section records the current local redesign; the older entries below are historical. The initial review was local only. The user approved committing and pushing the finished redesign on November 24, 2026. Baseline: `d89fcfd`.
+
+- Inspected the current live Houston site, repository, and Denver visual reference. Used layout, spacing, typography, palette, button treatment, and city-badge styling as reference only. Houston's existing header logo was preserved byte-for-byte; existing photos, six services, contact details, regional coverage, URLs, metadata, schema, redirects, email handler, and integration configuration were retained.
+- Unified navigation across pages. Header Free Estimate goes to the separate existing `/odor-removal-houston` landing page. Home remains available in the mobile dropdown. Added original Houston hero/getting-started copy, consistent photo cards, a clear process section, dimensional green city badges, updated estimate layout, and a contact footer without a logo. Removed an existing LA wording error and unsupported result-guarantee claims from the landing page, smoke page, and chatbot.
+- Reviews omitted at the user's request; Houston's widget/Business Profile will be supplied later. No Denver or LA reviews, profile, ratings, certifications, or business data were inserted.
+- Cropped the supplied favicon's whitespace (original 1024-square source; emblem bounds 313,306–712,708), retained a small safe margin, and created 32px/192px browser PNGs, 180px Apple touch icon, and ICO sizes 16–256px. All page icon URLs use `?v=20261124`.
+
+### Verification evidence
+
+- Static preservation check passed: 14 HTML documents (13 public pages plus the legacy redirect document), 4 valid JSON-LD blocks, and 332 local references. Existing title/meta/canonical/schema strings match baseline. Header logo, `vercel.json`, `site-config.js`, and `api/estimate/index.js` are unchanged. All telephone and email links are Houston's. HTML attribute-duplication check passed.
+- Browser layout checks passed for all 13 public pages at desktop 1440×1000, phone 390×844, and narrow 320×740: no horizontal overflow or broken loaded images. Visually inspected home, mobile menu, estimate landing page, city badges, and service-page layout. Screenshots are kept locally in ignored `.local-preview/`.
+- Clicked all six service-directory links and confirmed destinations. Clicked header Free Estimate to the separate landing page. Mobile dropdown opens/closes; Free Estimate navigates and closes the menu; Home returns to the homepage. Telephone targets verified as `tel:+17134444742`; no actual phone call was placed.
+- Browser form checks: required inputs and invalid email are blocked; missing local email configuration and simulated provider rejection show the Houston call/email fallback, retain fields, and re-enable submission. Simulated accepted submissions from the landing page, homepage at mobile width, and dedicated boat/RV form redirect to `/thank-you`. Boat/RV required fields and unit selection verified. No local test sends email.
+- API mocked-provider checks passed for 405, invalid input 400, missing config 500, provider rejection 502, network failure 500, accepted response, HTML escaping, and Houston recipient. Existing chatbot regression suite passed (20 FAQ answers, 15 conversation cases, quote routing, success redirect and failure fallback). No unexpected console errors observed in the final browser check.
+- One authorized live **TEST ONLY** request submitted directly to `https://www.houstonodorpros.com/api/estimate`. Used the public Houston business email and a message explicitly stating not to schedule or call back. HTTP 200 returned `ok:true`, provider ID `01a20ed5-d81e-7a29-93db-71384c7dce3c`. This confirms provider acceptance, not confirmed inbox delivery. No second live request was sent. Local browser tests exercised the form UI separately.
+- Analytics/Tawk loader code remains present and unchanged; `site-config.js` still has empty Houston Google tag/Tawk values. No explicit Google Ads conversion event was present in the baseline. Analytics collection and conversion attribution therefore have **not** been verified. No Denver or LA tracking IDs were substituted.
+
+### Remaining items
+
+- Local preview approved for commit and push on November 24, 2026. Live deployment verification remains separate.
+- Add Houston's own reviews widget/Business Profile later, as requested.
+- Supply Houston analytics/Google Ads configuration when ready; then verify actual events and conversions separately.
+- Confirm the TEST ONLY email in the destination inbox if delivery confirmation is needed.
+
+---
+
 Built as a separate project for houstonodorpros.com. The LA website and its repository were not changed or deployed.
 
 ## Passed

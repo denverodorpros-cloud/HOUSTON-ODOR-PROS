@@ -3,7 +3,11 @@
 Separate Houston edition of the LA ODOR PROS website. Domain: https://www.houstonodorpros.com. Email: houstonodorpros@gmail.com.
 
 ## Preview
-Run `python preview.py` and open http://127.0.0.1:8096/. Clean page URLs are supported. Local preview does not send real email.
+Run `node preview-server.cjs` and open http://127.0.0.1:8097/. Clean page URLs and the existing redirects are supported. Local preview never sends real email. The original `python preview.py` static preview remains available on port 8096.
+
+For local form QA only, add `?previewEmail=accept` or `?previewEmail=reject` to a page URL. A visible simulation banner appears; the unchanged estimate handler runs against a mock provider. Without that query the local endpoint reports an unconfigured backend and the form shows the Houston phone/email fallback. These modes exist only in the local preview server, not the deployed API.
+
+Checks: `node tests/site-checks.cjs`, `node tests/estimate-api.cjs`, and `node tests/chatbot.cjs`. The site preservation check compares with the current Git HEAD and is intended to review the pending redesign.
 
 ## Deploy
 Deploy this folder as its own Vercel project, using the existing vercel.json. Do not deploy over the LA project. No build step is needed. Forms post to /api/estimate; configure RESEND_API_KEY, LEAD_TO_EMAIL=houstonodorpros@gmail.com, and a verified LEAD_FROM_EMAIL in that project. The onboarding@resend.dev default is for restricted Resend test sending only; production delivery requires a verified sender/domain.
