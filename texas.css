@@ -109,6 +109,11 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); box-shadow:0
 .form-status { grid-column:1/-1; overflow-wrap:anywhere; }
 .form-status[data-type='error'] { color:#8e2121; background:#fff1f1; }
 .page-hero,.landing-hero { background:linear-gradient(100deg,rgba(248,251,254,.99),rgba(234,246,251,.94) 50%,rgba(234,246,251,.68)),var(--hero-image,url('/assets/houston-skyline.jpg')) center/cover; }
+.landing-hero { background:linear-gradient(100deg,rgba(9,27,65,.86),rgba(9,39,105,.58) 48%,rgba(9,39,105,.18)),var(--hero-image,url('/assets/houston-skyline.jpg')) center/cover; }
+.landing-hero h1,.landing-hero .lead { color:#fff; }
+.landing-hero .hero-inner > div:first-child > .eyebrow { color:#b8e87f; }
+.site-footer .photo-credit,.site-footer .photo-credit a { color:#dce8f6; font-size:.75rem; }
+.site-footer .photo-credit { margin-top:18px; }
 .page-hero { padding:80px 0; }
 .page-hero h1 { max-width:880px; }
 .page-hero .lead { max-width:760px; }
