@@ -142,7 +142,10 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); box-shadow:0
 .process-band .review p { color:var(--muted); }
 .expectation-star { color:var(--green); }
 details { border-color:var(--line); border-radius:6px; }
-.thank-you-hero { background:var(--mint); }
+.thank-you-hero { background:linear-gradient(100deg,rgba(9,27,65,.86),rgba(9,39,105,.58) 48%,rgba(9,39,105,.18)),var(--hero-image) center/cover; }
+.thank-you-hero::after { display:none; }
+.thank-you-copy h1,.thank-you-copy .lead,.thank-you-copy .lead a { color:#fff; }
+.thank-you-copy .eyebrow { color:#b8e87f; }
 .thank-you-panel { border:1px solid var(--line); background:#fff; }
 .confirm-mark { background:var(--badge-gradient); color:#fff; }
 .thank-you-panel .btn-primary { color:#fff; }
