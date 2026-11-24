@@ -511,3 +511,47 @@ if (/^(AW-\d+|G-[A-Z0-9]+)$/.test(houstonIntegrations.googleTagId || "")) {
   window.gtag("js", new Date());
   window.gtag("config", houstonIntegrations.googleTagId);
 }
+
+// Visitor-only alert. Independent of estimate forms, chat, analytics and navigation.
+(function setupHoustonVisitorAlert() {
+  try {
+    if (window.location.protocol !== 'https:' ||
+        !['www.houstonodorpros.com', 'houstonodorpros.com'].includes(window.location.hostname)) return;
+    if (/bot|crawl|spider|preview|headless|facebookexternalhit|whatsapp|telegram|twitter|slack|discord|linkedin|pinterest|lighthouse|pagespeed/i.test(navigator.userAgent) || navigator.webdriver) return;
+    const flag = 'hop_visitor_attempt_v1';
+    const sessionKey = 'hop_visitor_session_v1';
+    let attempted = false, timer = null;
+    function alreadyAttempted() {
+      if (attempted) return true;
+      try { return sessionStorage.getItem(flag) === '1'; } catch { return false; }
+    }
+    function sendVisitorAlert() {
+      timer = null;
+      if (document.visibilityState !== 'visible' || alreadyAttempted()) return;
+      attempted = true;
+      let sessionId;
+      try {
+        sessionId = sessionStorage.getItem(sessionKey);
+        if (!sessionId) { sessionId = crypto.randomUUID(); sessionStorage.setItem(sessionKey, sessionId); }
+        sessionStorage.setItem(flag, '1');
+      } catch {
+        try { sessionId = crypto.randomUUID(); } catch { return; }
+      }
+      // Path only. No query string, fragment, IP, referrer or form data.
+      try {
+        fetch('/api/visitor', {
+          method: 'POST', credentials: 'same-origin', keepalive: true,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: window.location.pathname, sessionId }),
+          signal: AbortSignal.timeout(8000)
+        }).catch(() => {});
+      } catch { /* Notifications must never affect the site. */ }
+    }
+    function watchVisibility() {
+      if (timer !== null) { clearTimeout(timer); timer = null; }
+      if (document.visibilityState === 'visible' && !alreadyAttempted()) timer = setTimeout(sendVisitorAlert, 4000);
+    }
+    document.addEventListener('visibilitychange', watchVisibility);
+    watchVisibility();
+  } catch { /* Storage/API restrictions must never affect forms or navigation. */ }
+})();

@@ -9,6 +9,16 @@ For local form QA only, add `?previewEmail=accept` or `?previewEmail=reject` to 
 
 Checks: `node tests/site-checks.cjs`, `node tests/estimate-api.cjs`, and `node tests/chatbot.cjs`. The site preservation check compares with the current Git HEAD and is intended to review the pending redesign.
 
+## Visitor notifications
+
+The visitor-only `/api/visitor` endpoint uses production Secrets `PUSHOVER_APP_TOKEN` and `PUSHOVER_USER_KEY`. Never put their values in source, browser configuration, or logs. The shared script waits four continuous seconds on a visible production page and attempts one notification per browser session. It sends only a known public page path and a random session identifier to the endpoint; the provider receives only the path, fixed title, normal priority, and the server-side Pushover credentials. Estimate forms do not trigger notifications.
+
+Suppression uses sessionStorage, an opaque signed `__Host-hop_visitor` cookie (`Secure; HttpOnly; SameSite=Lax; Path=/`, no persistent expiry), and a bounded in-memory session cache. Common crawlers, preview agents, and browser automation are skipped. Requests without an allowed Houston Origin, or with a cross-site Fetch Metadata header, are rejected. Origin checks are browser protections, not authentication against a caller spoofing HTTP headers.
+
+The function allows at most 3 attempts per minute and 30 per hour **per warm server instance**. These are best-effort limits, not a durable global cap: cold starts or parallel instances reset/separate counters. No IP-based tracking or shared database is used. Genuine visits above those limits are skipped for that session. Provider outages are not retried during the same session. Pushover account quotas, blocked JavaScript/storage/cookies, browser session restoration, and simultaneous first visits in different tabs can affect delivery or deduplication. A visitor leaving or hiding the page before four seconds does not alert.
+
+Run `node tests/visitor.cjs` for mocked notification, privacy, security, session, visibility-delay and throttling checks. No live notifications are sent by this test. The endpoint accepts `testOnly:true` for a clearly labelled test message; it does not bypass cookie/session suppression, origin checks, bot filtering, or throttling.
+
 ## Deploy
 Deploy this folder as its own Vercel project, using the existing vercel.json. Do not deploy over the LA project. No build step is needed. Forms post to /api/estimate; configure RESEND_API_KEY, LEAD_TO_EMAIL=houstonodorpros@gmail.com, and a verified LEAD_FROM_EMAIL in that project. The onboarding@resend.dev default is for restricted Resend test sending only; production delivery requires a verified sender/domain.
 
