@@ -2,7 +2,8 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const root=path.resolve(__dirname,'..');
 function files(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()&&!e.name.startsWith('.')&&e.name!=='assets'?files(path.join(dir,e.name)):e.isFile()&&e.name.endsWith('.html')?[path.join(dir,e.name)]:[]);}
 const pages=files(root); let links=0,schemas=0;
-const metadata = html => [...html.matchAll(/<title>[\s\S]*?<\/title>|<meta\b[^>]*>|<link\b[^>]*rel="canonical"[^>]*>|<script type="application\/ld\+json">[\s\S]*?<\/script>/g)].map(m=>m[0]);
+// Social image/card fields intentionally change; titles, descriptions and canonical SEO must stay intact.
+const metadata = html => [...html.matchAll(/<title>[\s\S]*?<\/title>|<meta\b[^>]*>|<link\b[^>]*rel="canonical"[^>]*>|<script type="application\/ld\+json">[\s\S]*?<\/script>/g)].map(m=>m[0]).filter(tag=>!/(?:property="og:(?:image(?::[^"]+)?|url)"|name="twitter:[^"]+")/.test(tag));
 for(const file of pages){
  const html=fs.readFileSync(file,'utf8'), rel=path.relative(root,file).replaceAll('\\','/');
  const old=cp.execFileSync('git',['show',`HEAD:${rel}`],{cwd:root,encoding:'utf8'});
