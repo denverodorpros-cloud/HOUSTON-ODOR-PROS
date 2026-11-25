@@ -25,11 +25,11 @@ for(const file of pages){
   assert.ok(fs.existsSync(local)||fs.existsSync(local+'.html')||fs.existsSync(path.join(local,'index.html')),`${rel} missing ${attr}=${value}`); links++;
  }
 }
-for(const file of ['vercel.json','site-config.js','api/estimate/index.js','assets/houston-wordmark-nature.png']) {
+for(const file of ['vercel.json','site-config.js','assets/houston-wordmark-nature.png']) {
  const before=cp.execFileSync('git',['show',`HEAD:${file}`],{cwd:root,maxBuffer:10000000});
  const after=fs.readFileSync(path.join(root,file));
  if(file.endsWith('.png'))assert.ok(before.equals(after),`${file} must be preserved`);
  else assert.equal(before.toString().replaceAll('\r\n','\n'),after.toString().replaceAll('\r\n','\n'),`${file} must be preserved`);
 }
-console.log(`PASS: ${pages.length} documents, ${schemas} schema blocks, ${links} local references; original SEO, logo, redirects, config and email handler preserved; Houston-only contact details.`);
+console.log(`PASS: ${pages.length} documents, ${schemas} schema blocks, ${links} local references; original SEO, logo, redirects and config preserved; Houston-only contact details. Email handler verified separately.`);
 

@@ -1,6 +1,49 @@
 const TO_EMAIL = process.env.LEAD_TO_EMAIL || "houstonodorpros@gmail.com";
 const FROM_EMAIL = process.env.LEAD_FROM_EMAIL || "HOUSTON ODOR PROS <onboarding@resend.dev>";
 
+async function notifyEstimate(payload) {
+  const token = process.env.PUSHOVER_APP_TOKEN;
+  const user = process.env.PUSHOVER_USER_KEY;
+  if (!token || !user) return 'not_configured';
+  try {
+    // Fixed labels only: never forward arbitrary form values or customer details.
+    const services = {
+      'pet odor': 'Pet odor removal', 'pet odor removal': 'Pet odor removal',
+      'smoke odor': 'Smoke odor removal', 'smoke odor removal': 'Smoke odor removal',
+      'cooking odor': 'Cooking odor removal', 'cooking odor removal': 'Cooking odor removal',
+      'vehicle odor': 'Vehicle odor removal', 'vehicle odor removal': 'Vehicle odor removal',
+      'boat / rv / motorhome odor': 'Boat / RV / motorhome odor removal',
+      'boat / rv / motorhome odor removal': 'Boat / RV / motorhome odor removal',
+      'real estate / rental odor': 'Real estate / rental odor removal',
+      'real estate / rental odor removal': 'Real estate / rental odor removal'
+    };
+    const selection = (payload.fields.Service || payload.fields['Odor type'] || '').trim().toLowerCase();
+    const service = Object.hasOwn(services, selection) ? services[selection] : 'Not specified';
+    let pagePath = 'Not provided';
+    const pages = new Set(['/', '/services', '/about', '/faq', '/service-area',
+      '/odor-removal-houston', '/pet-odor-removal-houston', '/smoke-odor-removal-houston',
+      '/cooking-odor-removal-houston', '/vehicle-odor-removal-houston',
+      '/real-estate-odor-removal-houston', '/boat-rv-odor-removal-houston', '/thank-you']);
+    try {
+      const url = new URL(payload.pageUrl);
+      if (['https://www.houstonodorpros.com', 'https://houstonodorpros.com'].includes(url.origin) && pages.has(url.pathname)) pagePath = url.pathname;
+    } catch { /* Unknown page URLs are not included. */ }
+    const response = await fetch('https://api.pushover.net/1/messages.json', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(4000),
+      body: JSON.stringify({ token, user, priority: 0,
+        title: 'HOUSTON ODOR PROS — Free Estimate request',
+        message: `${payload.testOnly === true ? 'TEST ONLY — estimate notification check.' : 'New Free Estimate request accepted for email delivery.'}\nService: ${service}\nPage: ${pagePath}\nCheck your business email for request details.`
+      })
+    });
+    const result = await response.json().catch(() => ({}));
+    return response.ok && result.status === 1 ? 'accepted' : 'unavailable';
+  } catch {
+    // Push outages must never turn a successfully emailed lead into a form error.
+    return 'unavailable';
+  }
+}
+
 function escapeHtml(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
@@ -110,7 +153,8 @@ module.exports = async function handler(req, res) {
       return res.status(502).json({ error: "Email provider rejected the message." });
     }
 
-    return res.status(200).json({ ok: true, id: result.id });
+    const notification = await notifyEstimate(payload);
+    return res.status(200).json({ ok: true, id: result.id, notification });
   } catch (error) {
     console.error("Estimate endpoint error", error);
     return res.status(500).json({ error: "Could not send estimate request." });
