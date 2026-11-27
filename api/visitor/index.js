@@ -86,7 +86,7 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         token, user, priority: 0,
         title: 'HOUSTON ODOR PROS — Website visitor',
-        message: `${body.testOnly === true ? 'TEST ONLY — visitor integration check.' : 'New browser session.'}\nPage: ${pagePath}\nApprox. location: ${approximateLocation(req.headers)}`
+        message: `${body.testOnly === true ? 'TEST ONLY — visitor integration check.\n' : ''}Approx. location: ${approximateLocation(req.headers)}`
       })
     });
     const result = await response.json().catch(() => ({}));

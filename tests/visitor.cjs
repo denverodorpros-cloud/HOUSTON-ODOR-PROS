@@ -53,10 +53,11 @@ function client({ visible = true, storageBlocked = false, webdriver = false, use
   assert.equal(ok.code, 200); assert.equal(ok.body.status, 'accepted');
   const sent = s.calls[0];
   assert.equal(sent.title, 'HOUSTON ODOR PROS — Website visitor'); assert.equal(sent.priority, 0);
-  assert.equal(sent.message, 'TEST ONLY — visitor integration check.\nPage: /services\nApprox. location: Sugar Land, TX, US');
+  assert.equal(sent.message, 'TEST ONLY — visitor integration check.\nApprox. location: Sugar Land, TX, US');
+  assert.doesNotMatch(sent.message, /Page:|\/services/);
   assert.deepEqual(Object.keys(sent).sort(), ['message', 'priority', 'title', 'token', 'url', 'user']);
   assert.doesNotMatch(JSON.stringify(sent), /private@|must-not-send|\?|#contact|192\.0\.2\.123|29\.6197/);
-  const unavailable = server(); await unavailable.request(); assert.match(unavailable.calls[0].message, /Approx\. location: Unavailable$/);
+  const unavailable = server(); await unavailable.request(); assert.equal(unavailable.calls[0].message, 'Approx. location: Unavailable');
   const malformed = server(); await malformed.request({ headers: { origin: 'https://www.houstonodorpros.com', 'user-agent': browserUA, 'content-type': 'application/json', 'x-vercel-ip-city': 'private%40example.com', 'x-vercel-ip-country-region': 'invalid\nheader', 'x-vercel-ip-country': 'invalid' } }); assert.match(malformed.calls[0].message, /Approx\. location: Unavailable$/);
   const cookie = ok.headers['Set-Cookie'];
   assert.match(cookie, /__Host-hop_visitor=/); assert.match(cookie, /Secure; HttpOnly; SameSite=Lax/); assert.doesNotMatch(cookie, /Max-Age|Expires/);
