@@ -28,6 +28,16 @@ function pathOnly(value) {
   return PATHS.has(pathname) ? pathname : null;
 }
 
+function approximateLocation(headers) {
+  // Vercel supplies coarse geolocation. Never forward the underlying IP or coordinates.
+  let city = '';
+  try { city = decodeURIComponent(headers['x-vercel-ip-city'] || ''); } catch { /* Unknown city. */ }
+  city = /^[\p{L}\p{M}][\p{L}\p{M} .'-]{0,63}$/u.test(city) ? city : '';
+  const region = /^[A-Za-z0-9-]{1,8}$/.test(headers['x-vercel-ip-country-region'] || '') ? headers['x-vercel-ip-country-region'].toUpperCase() : '';
+  const country = /^[A-Za-z]{2}$/.test(headers['x-vercel-ip-country'] || '') ? headers['x-vercel-ip-country'].toUpperCase() : '';
+  return [city, region, country].filter(Boolean).join(', ') || 'Unavailable';
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('Vary', 'Origin');
@@ -76,7 +86,7 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         token, user, priority: 0,
         title: 'HOUSTON ODOR PROS — Website visitor',
-        message: `${body.testOnly === true ? 'TEST ONLY — visitor integration check.' : 'New browser session.'}\nPage: ${pagePath}`
+        message: `${body.testOnly === true ? 'TEST ONLY — visitor integration check.' : 'New browser session.'}\nPage: ${pagePath}\nApprox. location: ${approximateLocation(req.headers)}`
       })
     });
     const result = await response.json().catch(() => ({}));

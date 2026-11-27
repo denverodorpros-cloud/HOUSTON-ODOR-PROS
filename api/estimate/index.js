@@ -6,7 +6,7 @@ async function notifyEstimate(payload) {
   const user = process.env.PUSHOVER_USER_KEY;
   if (!token || !user) return 'not_configured';
   try {
-    // Fixed labels only: never forward arbitrary form values or customer details.
+    // Service labels are fixed. Location comes only from the dedicated City/ZIP fields.
     const services = {
       'pet odor': 'Pet odor removal', 'pet odor removal': 'Pet odor removal',
       'smoke odor': 'Smoke odor removal', 'smoke odor removal': 'Smoke odor removal',
@@ -19,6 +19,11 @@ async function notifyEstimate(payload) {
     };
     const selection = (payload.fields.Service || payload.fields['Odor type'] || '').trim().toLowerCase();
     const service = Object.hasOwn(services, selection) ? services[selection] : 'Not specified';
+    const cityValue = (payload.fields.City || '').trim();
+    const zipValue = (payload.fields.ZIP || '').trim();
+    const city = /^[\p{L}\p{M}][\p{L}\p{M} .'-]{0,63}$/u.test(cityValue) ? cityValue : '';
+    const zip = /^\d{5}(?:-\d{4})?$/.test(zipValue) ? zipValue : '';
+    const customerLocation = [city, zip].filter(Boolean).join(' · ') || 'Not provided';
     let pagePath = 'Not provided';
     const pages = new Set(['/', '/services', '/about', '/faq', '/service-area',
       '/odor-removal-houston', '/pet-odor-removal-houston', '/smoke-odor-removal-houston',
@@ -33,7 +38,7 @@ async function notifyEstimate(payload) {
       signal: AbortSignal.timeout(4000),
       body: JSON.stringify({ token, user, priority: 0,
         title: 'HOUSTON ODOR PROS — Free Estimate request',
-        message: `${payload.testOnly === true ? 'TEST ONLY — estimate notification check.' : 'New Free Estimate request accepted for email delivery.'}\nService: ${service}\nPage: ${pagePath}\nCheck your business email for request details.`
+        message: `${payload.testOnly === true ? 'TEST ONLY — estimate notification check.' : 'New Free Estimate request accepted for email delivery.'}\nService: ${service}\nCustomer location: ${customerLocation}\nPage: ${pagePath}\nCheck your business email for request details.`
       })
     });
     const result = await response.json().catch(() => ({}));

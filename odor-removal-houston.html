@@ -67,8 +67,8 @@
           <form class="estimate-form" id="estimate" aria-label="Free estimate request">
             <label>First name<input name="First name" required></label>
             <label>Phone<input name="Phone" type="tel" required></label>
-            <label>Email<input name="Email" type="email" required></label>
-            <label>City<input name="City" value="Houston"></label>
+            <label class="wide">Email<input name="Email" type="email" required></label>
+            <label>City (optional)<input name="City" autocomplete="address-level2" placeholder="Houston, Katy, Sugar Land…" maxlength="64"></label><label>ZIP code (optional)<input name="ZIP" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]{5}(-[0-9]{4})?" maxlength="10" placeholder="77002"></label>
             <label class="wide">Property address<input name="Property address" autocomplete="street-address" placeholder="Street address, city, ZIP"></label>
             <label class="wide">Odor type<select name="Odor type"><option>Pet odor</option><option>Smoke odor</option><option>Cooking odor</option><option>Vehicle odor</option><option>Boat / RV / motorhome odor</option><option>Real estate / rental odor</option></select></label>
             <label class="wide">Project details<textarea name="Project details" placeholder="Home, apartment, vehicle, rental, listing, square footage, timeline"></textarea></label>
